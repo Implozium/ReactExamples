@@ -2,7 +2,7 @@ import React, { Fragment, Component } from 'react';
 import { Field, Fields, FormSection } from 'redux-form';
 import Grid from '@material-ui/core/Grid';
 
-import { TextField, Select } from '../index';
+import { TextField, Select, Button } from '../index';
 import ComplexComponent from './ComplexComponent';
 import { getFieldProps, updateFieldProps, setFieldProps, initFieldProps } from '../../common/fields-manager';
 import Rules from '../../common/Rules';

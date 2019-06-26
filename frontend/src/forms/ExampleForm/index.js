@@ -4,7 +4,7 @@ import { Field, FieldArray, FormSection, reduxForm, getFormValues } from 'redux-
 import { connect } from "react-redux";
 import Grid from '@material-ui/core/Grid';
 
-import { TextField, RadioGroup, Checkbox } from '../../components';
+import { TextField, RadioGroup, Checkbox, Button } from '../../components';
 import { Address } from '../../components/complex';
 import ComplexComponent from '../../components/complex/ComplexComponent';
 import { getFieldProps, updateFieldProps, initFieldProps, setFieldProps } from '../../common/fields-manager';
@@ -35,7 +35,7 @@ class AddressBlock extends ComplexComponent {
                     });
                 }
             },
-            validate: [],
+            validate: [Rules.required()],
         });
     }
 
@@ -84,13 +84,14 @@ class Addresses extends Component {
                         change={change}
                         syncValues={syncValues}
                     />
+                    <Button color={'link'} onClick={() => fields.remove(i)}>Remove</Button>
                     <hr/>
                 </div>
             ))}
             <div>
-                <button type="button" onClick={() => fields.push({})}>
+                <Button onClick={() => fields.push({})}>
                 Add Address
-                </button>
+                </Button>
             </div>
         </div>
         );
@@ -172,7 +173,7 @@ class ExampleForm extends Component {
         } = this.props;
 
         return (
-            <form onSubmit={handleSubmit(this.submit)}>
+            <form onSubmit={handleSubmit(this.submit)} style={{marginTop: '60px'}}>
                 <Grid container>
                     <Grid item xs={6}>
                         <Field
@@ -250,7 +251,7 @@ class ExampleForm extends Component {
                     change={change}
                 />
                 <div>
-                    <button type="submit" className="next">Submit</button>
+                    <Button type="submit" color={'link'}>Submit</Button>
                 </div>
                 <pre>
                     {JSON.stringify(this.props.initialValues, null, 4)}

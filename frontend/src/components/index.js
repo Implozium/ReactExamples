@@ -14,6 +14,8 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
 import Checkbox from '@material-ui/core/Checkbox';
+import Button from '@material-ui/core/Button';
+import { untouch } from 'redux-form';
 
 function TextMaskField(props) {
     const { inputRef, mask, ...other } = props;
@@ -27,6 +29,70 @@ function TextMaskField(props) {
             }}
         />
     );
+}
+
+const useErrorBlockStyles = makeStyles({
+    root: {
+        position: 'absolute',
+        left: '-8px',
+        right: '-8px',
+        bottom: '100%',
+        padding: '18px 10px',
+        //minHeight: '55px',
+        cursor: 'default',
+        border: '1px solid #DF8782',
+        borderRadius: '2px',
+        backgroundColor: '#F6DEDD',
+        boxShadow: '0 3px 4px 0 rgba(51,51,51,0.1)',
+        color: '#260A0B',
+        fontWeight: '400',
+        fontSize: '14px',
+        lineHeight: '18px',
+        zIndex: 1,
+        '&::before': {
+            display: 'block',
+            content: "''",
+            position: 'absolute',
+            left: '50%',
+            width: '10px',
+            height: '10px',
+            border: '10px solid transparent',
+            boxSizing: 'border-box',
+            
+            bottom: '-20px',
+            borderTopColor: '#DF8782',
+        },
+        '&::after': {
+            display: 'block',
+            content: "''",
+            position: 'absolute',
+            left: '50%',
+            width: '10px',
+            height: '10px',
+            border: '10px solid transparent',
+            boxSizing: 'border-box',
+
+            bottom: '-19px',
+            borderTopColor: '#F6DEDD',
+        },
+        '&$error': {
+            color: '#260A0B',
+        }
+    },
+    error: {
+    }
+});
+
+const ErrorBlock = ({
+    error,
+    children = '',
+    onClick = () => {},
+}) => {
+    const classes = useErrorBlockStyles({});
+
+    return (
+        <FormHelperText error={error} hidden={!error} onClick={onClick} classes={{root: classes.root, error: classes.error}}>{children}</FormHelperText>
+    )
 }
 
 const useRenderTextFieldStyles = makeStyles({
@@ -53,7 +119,7 @@ const RenderTextField = ({
     label,
     placeholder,
     className = "",
-    meta: { touched, invalid, error },
+    meta: { touched, invalid, error, dispatch, form },
     mask,
     ...other
 }) => {
@@ -67,7 +133,7 @@ const RenderTextField = ({
                 ? <OutlinedInput classes={{input: classes.input}} error={touched && invalid} {...input} inputProps={{mask}} inputComponent={TextMaskField}/>
                 : <OutlinedInput classes={{input: classes.input}} error={touched && invalid} {...input}/>
             }
-            <FormHelperText error={touched && invalid}>{touched && error}</FormHelperText>
+            <ErrorBlock error={touched && invalid} onClick={() => dispatch(untouch(form, input.name))}>{touched && error}</ErrorBlock>
         </FormControl>
     </div>
     );
@@ -88,7 +154,7 @@ const RenderRadioGroup = ({
     label,
     options,
     className = "",
-    meta: { touched, error, invalid },
+    meta: { touched, error, invalid, dispatch, form },
     ...other
 }) => {
     const classes = useRenderRadioGroupStyles({});
@@ -102,7 +168,7 @@ const RenderRadioGroup = ({
                     <FormControlLabel key={option.value} {...option} value={option.value} control={<Radio color="primary"/>} label={option.label}/>
                 )}
             </RadioGroup>
-            <FormHelperText error={touched && invalid}>{touched && error}</FormHelperText>
+            <ErrorBlock error={touched && invalid} onClick={() => dispatch(untouch(form, input.name))}>{touched && error}</ErrorBlock>
         </FormControl>
     </div>
     );
@@ -129,7 +195,7 @@ const RenderSelect = ({
     label,
     options,
     className = "",
-    meta: { touched, error, invalid },
+    meta: { touched, error, invalid, dispatch, form },
     ...other
 }) => {
     const classes = useRenderSelectStyles({});
@@ -143,7 +209,7 @@ const RenderSelect = ({
                     <MenuItem key={option.value} {...option} value={option.value}>{option.label}</MenuItem>
                 )}
             </Select>
-            <FormHelperText error={touched && invalid}>{touched && error || ' '}</FormHelperText>
+            <ErrorBlock error={touched && invalid} onClick={() => dispatch(untouch(form, input.name))}>{touched && error}</ErrorBlock>
         </FormControl>
     </div>
     );
@@ -176,9 +242,52 @@ const RenderCheckbox = ({
     );
 };
 
+const useRenderButtonStyles = makeStyles({
+    root: {
+        boxSizing: 'border-box',
+        width: '100%',
+        height: '48px',
+        minWidth: '144px',
+        borderRadius: '2px',
+        fontSize: '18px',
+        lineHeight: '34px',
+        textTransform: 'none',
+    },
+    primary: {
+        backgroundColor: '#2589DE',
+        color: '#ffffff',
+        '&:hover': {
+            backgroundColor: '#3599EE',
+        }
+    },
+    link: {
+        backgroundColor: 'transparent',
+        color: '#2589DE',
+        '&:hover': {
+            color: '#3599EE',
+        }
+    }
+});
+
+const RenderButton = ({
+    children,
+    color = 'primary',
+    className = "",
+    ...other
+}) => {
+    const classes = useRenderButtonStyles({});
+
+    return (
+        <Button variant={color === 'link' ? undefined : "contained"} className={classes.root} classes={{root: classes[color] || classes['primary']}} {...other}>
+            {children}
+        </Button>
+    );
+};
+
 export {
     RenderTextField as TextField,
     RenderRadioGroup as RadioGroup,
     RenderSelect as Select,
     RenderCheckbox as Checkbox,
+    RenderButton as Button,
 };
