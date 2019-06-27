@@ -4,7 +4,7 @@ import { Field, FieldArray, FormSection, reduxForm, getFormValues } from 'redux-
 import { connect } from "react-redux";
 import Grid from '@material-ui/core/Grid';
 
-import { TextField, RadioGroup, Checkbox, Button } from '../../components';
+import { TextField, RadioGroup, Checkbox, Button, Header } from '../../components';
 import { Address } from '../../components/complex';
 import ComplexComponent from '../../components/complex/ComplexComponent';
 import { getFieldProps, updateFieldProps, initFieldProps, setFieldProps } from '../../common/fields-manager';
@@ -173,7 +173,8 @@ class ExampleForm extends Component {
         } = this.props;
 
         return (
-            <form onSubmit={handleSubmit(this.submit)} style={{marginTop: '60px'}}>
+            <form onSubmit={handleSubmit(this.submit)}>
+                <Header type={'big'}>Example form</Header>
                 <Grid container>
                     <Grid item xs={6}>
                         <Field
@@ -218,6 +219,7 @@ class ExampleForm extends Component {
                     name="clearLastName"
                     component={TextField}
                     label="Clear Last Name"
+                    tooltip={'Hello'}
                 />
                 <hr/>
                 <Address

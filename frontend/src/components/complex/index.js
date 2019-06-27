@@ -2,7 +2,7 @@ import React, { Fragment, Component } from 'react';
 import { Field, Fields, FormSection } from 'redux-form';
 import Grid from '@material-ui/core/Grid';
 
-import { TextField, Select, Button } from '../index';
+import { TextField, Select, Header } from '../index';
 import ComplexComponent from './ComplexComponent';
 import { getFieldProps, updateFieldProps, setFieldProps, initFieldProps } from '../../common/fields-manager';
 import Rules from '../../common/Rules';
@@ -129,12 +129,14 @@ class Address extends ComplexComponent {
 
     renderBody() {
         return <Grid container>
+            <Header type={'medium'}>Address block</Header>
             <Grid item xs={6}>
                 <Field
                     {...getFieldProps(this.state, 'street')}
                     name="street"
                     component={Select}
                     label="Street"
+                    tooltip={'Your favourite street'}
                     validate={[Rules.required()]}
                 />
             </Grid>
@@ -146,6 +148,7 @@ class Address extends ComplexComponent {
                     label="Building"
                 />
             </Grid>
+            <Header type={'small'}>Current place:</Header>
             <Grid item xs={6}>
                 <Field
                     {...getFieldProps(this.state, 'flat')}
