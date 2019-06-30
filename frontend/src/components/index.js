@@ -46,7 +46,7 @@ const useErrorBlockStyles = makeStyles({
         backgroundColor: '#F6DEDD',
         boxShadow: '0 3px 4px 0 rgba(51,51,51,0.1)',
         color: '#260A0B',
-        fontWeight: '400',
+        fontWeight: 400,
         fontSize: '14px',
         lineHeight: '18px',
         zIndex: 1,
@@ -109,7 +109,7 @@ const useTooltipBlockStyles = makeStyles({
         borderRadius: '2px',
         backgroundColor: '#F7FAFC',
         boxShadow: '0 3px 4px 0 rgba(51,51,51,0.1)',
-        fontWeight: '400',
+        fontWeight: 400,
         fontSize: '14px',
         lineHeight: '18px',
         color: 'black',
@@ -269,6 +269,7 @@ const useRenderSelectStyles = makeStyles({
     },
     input: {
         padding: '22px 14px 14px 14px',
+        height: '27px',
     }
 });
 
@@ -320,7 +321,7 @@ const RenderCheckbox = ({
         <FormControlLabel
             className={classes.root} {...other}
             control={<Checkbox {...input} color="primary"/>}
-            label="Primary"
+            label={label}
         />
     </div>
     );
