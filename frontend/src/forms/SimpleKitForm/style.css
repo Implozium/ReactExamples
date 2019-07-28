@@ -1,0 +1,18 @@
+.adaptive-table__body-flex {
+    display: flex;
+    flex-wrap: wrap;
+}
+.adaptive-table__body-flex-row {
+    flex-basis: 150px;
+    flex-grow: 1;
+    border: 1px solid lightgrey;
+    padding: 8px;
+    margin: 8px;
+    background-color: #333;
+    color: #eee;
+    transition: 0.3s all;
+}
+.adaptive-table__body-flex-row_unfiltered {
+    opacity: 0.5;
+    transform: scale(0.5);
+}

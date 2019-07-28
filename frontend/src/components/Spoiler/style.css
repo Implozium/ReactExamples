@@ -1,0 +1,21 @@
+.spoiler {
+    width: 100%;
+    position: relative;
+}
+.spoiler_expanded {
+
+}
+.spoiler__title {
+    width: 100%;
+    cursor: pointer;
+}
+.spoiler__body {
+    display: none;
+    width: 100%;
+}
+.spoiler_over .spoiler__body {
+    position: absolute;
+}
+.spoiler_expanded .spoiler__body {
+    display: block;
+}

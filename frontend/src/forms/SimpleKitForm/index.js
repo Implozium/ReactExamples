@@ -9,16 +9,50 @@ import { Address } from '../../components/complex';
 import ComplexComponent from '../../components/complex/ComplexComponent';
 import { getFieldProps, updateFieldProps, initFieldProps, setFieldProps } from '../../common/fields-manager';
 import Rules from '../../common/Rules';
+import AdaptiveTable from '../../components/AdaptiveTable';
+import {
+    FilteredList,
+} from '../../components/FilteredList';
+import {
+    Spoiler,
+} from '../../components/Spoiler';
+
+import './style.css';
+
+function makeDocumentItem(i) {
+    const types = ['Order', 'Bill', 'Pay', 'Notify', 'Etc'];
+    const exts = ['svg', 'txt', 'doc', 'docx', 'xml', 'css'];
+    const names = ['file', 'photo', 'table', 'document', 'task', 'order'];
+    const sizes = [10, 100, 1000, 10000, 10000, 100000];
+    const joineds = ['John', 'Jack', '', 'Jill', 'Mark', 'Terry'];
+    const random = {
+        documentId: i,
+        type: types[Math.floor(Math.random() * types.length)],
+        name: names[Math.floor(Math.random() * names.length)],
+        ext: exts[Math.floor(Math.random() * exts.length)],
+        size: sizes[Math.floor(Math.random() * sizes.length)],
+        joined: joineds[Math.floor(Math.random() * joineds.length)]
+    }
+    random.name = random.name + '.' + random.ext;
+    return random;
+}
 
 class KitForm extends Component {
     constructor(props) {
         super(props);
         this.state = {
             fields: {},
+            filteredListData: ['One', 'Two', 'Two', 'Three', '4', '5'],
+            tableData: Array.from({length: 100}, (v, i) => makeDocumentItem(i))
         };
     }
 
     componentDidMount() {
+        setInterval(() => {
+            this.setState({
+                tableData: this.state.tableData.concat(makeDocumentItem(this.state.tableData.length)),
+            });
+        }, 10000);
     }
 
     submit(values) {
@@ -193,6 +227,133 @@ class KitForm extends Component {
                             options={[{label: '1', value: '1'}, {label: '2', value: '2'}]}
                             validate={[Rules.required()]}
                         />
+                    </Grid>
+                    <Grid item xs={6}>
+                        <Header type={'medium'}>Spoiler 1</Header>
+                        <Spoiler title={'Spoiler'}>
+                            Spoiler data
+                        </Spoiler>
+                    </Grid>
+                    <Grid item xs={6}>
+                        <Header type={'medium'}>Spoiler 2</Header>
+                        <Spoiler title={'Spoiler'} type={'over'}>
+                            <ul>
+                                <li>Spoiler data 1</li>
+                                <li>Spoiler data 2</li>
+                                <li>Spoiler data 3</li>
+                            </ul>
+                        </Spoiler>
+                    </Grid>
+                    <Grid item xs={12}>
+                        <Header type={'medium'}>Filtered List</Header>
+                        <FilteredList
+                            data={this.state.filteredListData}
+                            name={"example-filter"}
+                            onChange={(name, checkeds) => console.log('checkeds for', name, checkeds)}
+                        />
+                    </Grid>
+                    <Grid item xs={12}>
+                        <Header type={'medium'}>Adaptive Table</Header>
+                        <AdaptiveTable.Table
+                            data={this.state.tableData}
+                            pagination={10}
+                        >
+                            <AdaptiveTable.Head
+                                className={'adaptive-table__head'}
+                            >
+                                <AdaptiveTable.Header
+                                    name={''}
+                                >
+                                    Order
+                                </AdaptiveTable.Header>
+                                <AdaptiveTable.Header
+                                    name={'type'}
+                                    filter={true}
+                                    sorter={(a, b) => a.type.localeCompare(b.type)}
+                                >
+                                    type and for
+                                </AdaptiveTable.Header>
+                                <AdaptiveTable.Header
+                                    name={'ext'}
+                                    filter={true}
+                                >
+                                    name
+                                </AdaptiveTable.Header>
+                                <AdaptiveTable.Header
+                                    name={'size'}
+                                    filter={true}
+                                    sorter={(a, b) => a.size - b.size}
+                                >
+                                    size
+                                </AdaptiveTable.Header>
+                            </AdaptiveTable.Head>
+                            <AdaptiveTable.Body
+                                renderRow={
+                                    ({ obj, i, isFiltered, filteredI }, { from, to }) => {
+                                        if (i < from || i >= to) {
+                                            return null;
+                                        }
+                                        return <div key={obj.documentId} className={'adaptive-table__row ' + (!isFiltered ? 'adaptive-table__row_unfiltered' : '')}>
+                                            <div className={'adaptive-table__item'}>{i + 1}({filteredI + 1})</div>
+                                            <div className={'adaptive-table__item'}>{obj.type} <i>{obj.joined && ('(' + obj.joined + ')')}</i></div>
+                                            <div className={'adaptive-table__item'}>{obj.name}</div>
+                                            <div className={'adaptive-table__item'}>{obj.size}</div>
+                                        </div>
+                                    }
+                                }
+                            />
+                            <AdaptiveTable.Counter
+                                render={(length, filteredLength) => <div>{filteredLength} from {length}</div>}
+                            />
+                            <AdaptiveTable.Paginator/>
+                            <AdaptiveTable.Paginator filtered={true}/>
+                            <AdaptiveTable.Prev>{'<'}</AdaptiveTable.Prev>
+                            <AdaptiveTable.Next>{'>'}</AdaptiveTable.Next>
+                            <div className="adaptive-table__filters">
+                                <AdaptiveTable.Filter name={'joined'}>Filter for joined</AdaptiveTable.Filter>
+                            </div>
+                            <div className="adaptive-table__filters">
+                                <AdaptiveTable.Sorter name={'joined'} sorter={(a, b) => a.joined.localeCompare(b.joined)}>Sorter for joined</AdaptiveTable.Sorter>
+                            </div>
+                            <AdaptiveTable.ResetFilter name={'type'}>
+                                <Button color={'link'}>reset filter type</Button>
+                            </AdaptiveTable.ResetFilter>
+                            <AdaptiveTable.ResetFilters name={'type'}>
+                                <Button color={'primary'}>reset all filters</Button>
+                            </AdaptiveTable.ResetFilters>
+                        </AdaptiveTable.Table>
+
+                        <Header type={'medium'}>Adaptive Table short</Header>
+
+                        <AdaptiveTable.Table
+                            data={this.state.tableData}
+                            pagination={10}
+                        >
+                            <AdaptiveTable.Paginator filtered={true}/>
+                            <AdaptiveTable.Counter
+                                render={(length, filteredLength) => <div>{filteredLength} from {length}</div>}
+                            />
+                            <AdaptiveTable.Body
+                                className={'adaptive-table__body-flex'}
+                                renderRow={
+                                    ({ obj, i, isFiltered, filteredI }, { from, to }) => {
+                                        if (!isFiltered || filteredI < from || filteredI >= to) {
+                                            return null;
+                                        }
+                                        return <div key={obj.documentId} className={'adaptive-table__body-flex-row ' + (!isFiltered ? 'adaptive-table__body-flex-row_unfiltered' : '')}>
+                                            <div className={'adaptive-table__item'}>{i + 1}({filteredI + 1})</div>
+                                            <div className={'adaptive-table__item'}>{obj.type} <i>{obj.joined && ('(' + obj.joined + ')')}</i></div>
+                                            <div className={'adaptive-table__item'}>{obj.name}</div>
+                                            <div className={'adaptive-table__item'}>{obj.size}</div>
+                                        </div>
+                                    }
+                                }
+                            />
+                            <div className="adaptive-table__filters">
+                                <AdaptiveTable.Filter name={'ext'}>Filter for joined</AdaptiveTable.Filter>
+                                <AdaptiveTable.Sorter name={'joined'} sorter={(a, b) => a.joined.localeCompare(b.joined)}>Sorter for joined</AdaptiveTable.Sorter>
+                            </div>
+                        </AdaptiveTable.Table>
                     </Grid>
                 </Grid>
                 <hr/>
